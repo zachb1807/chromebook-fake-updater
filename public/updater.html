@@ -1,0 +1,163 @@
+<html>
+
+<head>
+    <title>Updating...</title>
+    <style>
+        @font-face {
+            font-family: ProductSans;
+            src: url('productsans.TTF');
+        }
+
+        @font-face {
+            font-family: Robotofont;
+            src: url('roboto.ttf');
+        }
+
+        h1 {
+            font-family: JuneBug
+        }
+
+        #file {
+            border-radius: 0px;
+            height: 5px;
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+
+        /* For Chrome or Safari */
+        progress::-webkit-progress-bar {
+            background-color: #d3dff5;
+        }
+
+        progress::-webkit-progress-value {
+            background-color: #4285F4 !important;
+        }
+
+
+        /* For Firefox */
+        progress {
+            background-color: #d3dff5;
+        }
+
+        progress::-moz-progress-bar {
+            background-color: #4285F4 !important;
+        }
+
+        /* For IE10 */
+        progress {
+            background-color: #d3dff5;
+        }
+
+        progress {
+            background-color: #4285F4;
+        }
+
+        #updating-block {
+            margin-left: 25%;
+            margin-right: 25%;
+            font-family: Robotofont, sans-serif;
+            font-weight: 100;
+            font-size: 15px;
+            margin-top: 7%;
+        }
+        body {
+            cursor: none;
+        }
+    </style>
+    .
+</head>
+
+<body>
+    <div id="updating-block">
+        <img src="google-logo.png" style="height: 35px; margin-bottom: 0px;">
+        <p style="font-family: ProductSans; font-size: 32px; margin-top: 25px;">Updating...</p>
+        <p>Your Chromebook will restart after this update. Do not turn off or unplug your device.</p>
+        <progress id="file" max="100" style="width: 100%;"> 32% </progress>
+        <p style="margin-top: 40px;" id="status-text">Downloading...</p>
+        <div style="text-align: center;">
+            <img src="downloading.jpg" style="text-align: center; height: 250px;">
+        </div>
+    </div>
+
+
+    <script>
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        const value = urlParams.get('value')
+        const interval = Number(urlParams.get('interval')) * 1000
+        var increment = Number(urlParams.get('increment'))
+        const components = Number(urlParams.get('components'))
+        const slowDown = urlParams.get('slowdown')
+        var currentComponent = 1;
+        var reducedIncrement = false;
+
+        var elem = document.documentElement;
+
+        /* View in fullscreen */
+        function openFullscreen() {
+            if (elem.requestFullscreen) {
+                elem.requestFullscreen();
+            } else if (elem.webkitRequestFullscreen) { /* Safari */
+                elem.webkitRequestFullscreen();
+            } else if (elem.msRequestFullscreen) { /* IE11 */
+                elem.msRequestFullscreen();
+            }
+        }
+
+
+        if (value == null || value == "") {
+            document.getElementById("file").value = 2;
+        }
+        else {
+            document.getElementById("file").value = value;
+        }
+
+        if (components != null && components != "" && components > 1) {
+            document.getElementById("status-text").innerHTML = "Downloading component " + currentComponent + " of " + components;
+        }
+
+        if (interval != null && interval != "") {
+            setInterval(function () {
+                if (components == null || components == "" || components < 2) {
+                    if (document.getElementById("file").value <= 90) {
+                        document.getElementById("file").value = document.getElementById("file").value + increment;
+                    }
+                }
+                else {
+                    if (currentComponent != components) {
+                        if (document.getElementById("file").value < 100) {
+                            document.getElementById("file").value = document.getElementById("file").value + increment;
+                        }
+                        else {
+                            currentComponent++;
+                            document.getElementById("status-text").innerHTML = "Downloading component " + currentComponent + " of " + components;
+                            document.getElementById("file").value = document.getElementById("file").value = 0;
+                        }
+                    }
+                    else {
+                        if (reducedIncrement == false && document.getElementById("file").value >= 50 && slowDown == "true") {
+                            increment = increment / 2;
+                            reducedIncrement = true;
+                        }
+                        if (document.getElementById("file").value <= 85) {
+                            document.getElementById("file").value = document.getElementById("file").value + increment;
+                        }
+                        else {
+                            if (slowDown == "true") {
+                                increment = increment / 3;
+                                document.getElementById("file").value = document.getElementById("file").value + increment;
+                            }
+                            else {
+                                if (document.getElementById("file").value < 90) {
+                                    document.getElementById("file").value = document.getElementById("file").value + increment;
+                                }
+                            }
+                        }
+                    }
+                }
+            }, interval);
+        }
+    </script>
+</body>
+
+</html>

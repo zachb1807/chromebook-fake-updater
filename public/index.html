@@ -1,0 +1,134 @@
+<html>
+
+<head>
+    <title>Fake Chromebook Updater</title>
+    <style>
+        @font-face {
+            font-family: ProductSans;
+            src: url('productsans.TTF');
+        }
+
+        @font-face {
+            font-family: Robotofont;
+            src: url('roboto.ttf');
+        }
+
+        body {
+            font-family: RobotoFont;
+        }
+
+        input[type=number] {
+            font-family: RobotoFont;
+            border-radius: 5px;
+            border-style: solid;
+            height: 25px;
+            border-color: #7e7e7e;
+        }
+        input[type=submit] {
+            font-family: RobotoFont;
+            font-size: 15px;
+            padding: 5px;
+            cursor: pointer;
+            
+        }
+
+        h1 {
+            font-family: ProductSans;
+            font-weight:normal
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Fake Chromebook Updater</h1>
+    <hr>
+    <form onsubmit="submitForm()">
+        <label>Loading bar - starting percentage: </label>
+        <input type="number" value="25" id="initial"><br><br>
+        <label>Automatically increase? </label>
+        <input type="checkbox" id="increaseCheckbox"><br><br>
+        <div id="increaseDiv" style="display: none;">
+            <hr>
+            <label>Increment (%): </label>
+            <input type="number" id="increment" step=".1"><br><br>
+            <label>Interval (seconds): </label>
+            <input type="number" id="interval" step=".1">
+            <hr><br><br>
+        </div>
+        <label>Number of components to update:</label>
+        <input type="number" value="1" id="numOfComponents"><br><br>
+        <label>Slow down progress bar on last component? </label>
+        <input type="checkbox" id="slowCheckbox" disabled><br><br>
+        <input type="submit" value="Start">
+
+
+    </form>
+    <script>
+        document.getElementById("increment").value = 0.5;
+        document.getElementById("interval").value = 0.7;
+
+        function submitForm() {
+            event.preventDefault();
+            var initial = document.getElementById("initial").value;
+            var increment = document.getElementById("increment").value;
+            var interval = document.getElementById("interval").value;
+            var numOfComponents = document.getElementById("numOfComponents").value;
+            var slowDown = document.getElementById("slowCheckbox").checked;
+
+            if (document.getElementById("increaseCheckbox").checked) {
+                var url = "updater.html?value=" + initial + "&increment=" + increment + "&interval=" + interval + "&components=" + numOfComponents + "&slowdown=" + slowDown;
+            }
+            else {
+                var url = "updater.html?value=" + initial + "&components=" + numOfComponents + "&slowdown=" + slowDown;
+            }
+
+            //redirect to url
+
+            window.location = url;
+
+            return false;
+
+
+        }
+        if (document.getElementById("increaseCheckbox").checked) {
+            document.getElementById("increaseDiv").style.display = "block";
+            if (numOfComponents.value < 2) {
+                document.getElementById("slowCheckbox").disabled = true;
+                document.getElementById("slowCheckbox").checked = false;
+            }
+            else {
+                document.getElementById("slowCheckbox").disabled = false;
+            }
+        }
+
+
+        document.getElementById("increaseCheckbox").addEventListener('change', function () {
+            if (this.checked) {
+                document.getElementById("increaseDiv").style.display = "block";
+                if (numOfComponents.value < 2) {
+                    document.getElementById("slowCheckbox").disabled = true;
+                    document.getElementById("slowCheckbox").checked = false;
+                }
+                else {
+                    document.getElementById("slowCheckbox").disabled = false;
+                }
+            } else {
+                document.getElementById("increaseDiv").style.display = "none";
+                document.getElementById("slowCheckbox").disabled = true;
+                document.getElementById("slowCheckbox").checked = false;
+
+            }
+        });
+        document.getElementById("numOfComponents").addEventListener('input', function () {
+            if (document.getElementById("numOfComponents").value < 2 || !document.getElementById("increaseCheckbox").checked) {
+                document.getElementById("slowCheckbox").disabled = true;
+                document.getElementById("slowCheckbox").checked = false;
+            }
+            else {
+                document.getElementById("slowCheckbox").disabled = false;
+            }
+        });
+    </script>
+</body>
+
+</html>
